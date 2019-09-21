@@ -19,3 +19,7 @@ func (y YukariTopicHandler) CreateTopic(name string) (*database.YukariTopic, err
 
 	return topic, err
 }
+
+func (y YukariTopicHandler) GetTopic(name string) (*database.YukariTopic, error) {
+	return y.Store.GetTopic(name)
+}

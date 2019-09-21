@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	log "github.com/sirupsen/logrus"
@@ -41,6 +42,23 @@ func main() {
 		}
 
 		topic, err := topicHandler.CreateTopic(createTopicRequest.Name)
+
+		if err != nil {
+			return ReturnError(c, err)
+		}
+
+		return c.JSON(http.StatusOK, topic)
+	})
+
+	topicGroup.GET("/", func (c echo.Context) error {
+		query := c.QueryParam("topic")
+
+		if len(query) == 0 {
+			// No query. Error out
+			return ReturnError(c, errors.New("No query"))
+		}
+
+		topic, err := topicHandler.GetTopic(query)
 
 		if err != nil {
 			return ReturnError(c, err)

@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"errors"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -63,7 +64,18 @@ func (m Mongo) RegisterTopic(topic string, receivers []string) (*YukariTopic, er
 }
 
 func (m Mongo) GetTopic(topic string) (*YukariTopic, error) {
-	return nil, nil
+	var yukariTopic YukariTopic
+	err :=  m.Database.
+		Collection(TOPIC_COLLECTION).
+		FindOne(context.TODO(), bson.M{
+			"topic": topic,
+		}).
+		Decode(&yukariTopic)
+
+	if err != nil {
+		return nil, err
+	}
+	return &yukariTopic, nil
 }
 
 func CreateMongoStore() YukariDatabase {
